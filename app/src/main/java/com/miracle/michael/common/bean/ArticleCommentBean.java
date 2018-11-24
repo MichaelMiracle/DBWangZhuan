@@ -10,7 +10,7 @@ public class ArticleCommentBean implements Serializable {
     private String content;
     private String add_time;
     private String nickname;
-    private int userid;
+    private int user_id;
     private String img;
     private int create_id;
     private int click_num;
@@ -51,12 +51,12 @@ public class ArticleCommentBean implements Serializable {
         this.nickname = nickname;
     }
 
-    public int getUserid() {
-        return userid;
+    public int getUser_id() {
+        return user_id;
     }
 
-    public void setUserid(int userid) {
-        this.userid = userid;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     public String getImg() {

@@ -57,7 +57,7 @@ public class ArticleListAdapter extends RecyclerViewAdapter<ArticleCommentBean> 
             ((ChildListView)helper.getView(R.id.commentList)).setDatas(item.getChild());
         }
 
-        if(CommonUtils.getUserId().equals(item.getUserid()+"")){
+        if(CommonUtils.getUserId().equals(item.getUser_id()+"")){
             helper.setGone(R.id.im_delete,true);
         }else{
             helper.setGone(R.id.im_delete,false);
