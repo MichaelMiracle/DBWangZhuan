@@ -99,23 +99,23 @@ public interface SportService {
     /**
      * 首页title 类型
      */
-    @Headers({"BaseUrl:mi"})
-    @POST("life")
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/type")
     Call<ZResponse<List<ChannerlKey>>> getSearchKeys();
 
     /**
      * 首页列表
      */
     @Headers({"BaseUrl:zh"})
-    @POST("home/fish/flashList")
+    @POST("home/Netloan/flashList")
     Call<ZResponse<List<Football>>> getNewsList(@Query("class_id") int class_id, @Query("page") int page, @Query("pageSize") int pageSize);
     //    Call<ZResponse<List<Football>>> getNewsList(@Query("class_id") int class_id, @Query("page") int page, @Query("pageSize") int pageSize);
 
     /**
      * 首页列表
      */
-    @Headers({"BaseUrl:mi"})
-    @POST("life_content")
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/fishlist")
     Call<ZResponse<List<Football>>> getNewsSpotrList(@Query("class_id") int class_id, @Query("page") int page, @Query("pageSize") int pageSize);
     //    Call<ZResponse<List<Football>>> getNewsList(@Query("class_id") int class_id, @Query("page") int page, @Query("pageSize") int pageSize);
 
@@ -137,9 +137,9 @@ public interface SportService {
     /**
      * 列表详情
      */
-    @Headers({"BaseUrl:mi"})
-    @POST("life_row")
-    Call<ZResponse<ArticleDetailBean>> getCommentDetailSport(@Query("class_id") int id);
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/fishDetail")
+    Call<ZResponse<ArticleDetailBean>> getCommentDetailSport(@Query("id") int id);
 
     /**
      * 评论点赞
@@ -148,36 +148,36 @@ public interface SportService {
      */
 //    @Headers({"BaseUrl:zh"})
 //    @POST("home/fish/click")
-    @Headers({"BaseUrl:mi"})
-    @POST("life_comment_zan")
+    /**
+     * 评论点赞
+     *
+     * @POST("home/sport/click")
+     */
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/click")
     Call<ZResponse<String>> setClickClass(@Query("create_id") int create_id, @Query("click") int click, @Query("type") String type);
+
 
     /**
      * 删除评论
      * @POST("home/sport/click")
      */
-//    @Headers({"BaseUrl:zh"})
-//    @POST("home/fish/deleteComment")
-    @Headers({"BaseUrl:mi"})
-    @POST("life_comment_delete")
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/deleteComment")
     Call<ZResponse<String>> setClickDelete( @Query("id") int id,@Query("create_id") int create_id, @Query("type") String type);
 
     /**
      * 收藏接口
      */
-//    @Headers({"BaseUrl:zh"})
-//    @POST("home/fish/collect")
-    @Headers({"BaseUrl:mi"})
-    @POST("life_comment_chang")
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/collect")
     Call<ZResponse<String>> likeOrDislike(@Query("create_id") int create_id, @Query("type") String type);
 
     /**
      * 我的收藏接口
      */
-//    @Headers({"BaseUrl:zh"})
-//    @POST("home/fish/myCollect")
-    @Headers({"BaseUrl:mi"})
-    @POST("life_ction")
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/myCollect")
     Call<ZResponse<List<Football>>> getMycollections(@Query("page") int page, @Query("pageSize") int pageSize);
 
     /**
@@ -190,10 +190,8 @@ public interface SportService {
     /**
      * 评论列表list
      */
-//    @Headers({"BaseUrl:zh"})
-//    @POST("home/fish/commentList")
-    @Headers({"BaseUrl:mi"})
-    @POST("life_comment_list")
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/commentList")
     Call<ZResponse<List<ArticleCommentBean>>> getCommetList(@Query("id") int id, @Query("page") int page, @Query("pageSize") int pageSize);
 
 //    /**
@@ -206,8 +204,8 @@ public interface SportService {
     /**
      * 发评论
      */
-    @Headers({"BaseUrl:mi"})
-    @POST("life_comment")
+    @Headers({"BaseUrl:zh"})
+    @POST("home/Netloan/sendComment")
     Call<ZResponse<ArticleCommentBean>> sendCommentCommet(@Query("create_id") int id, @Query("content") String content,@Query("to_user_id") String to_user_id,@Query("type") String type);
 
 
