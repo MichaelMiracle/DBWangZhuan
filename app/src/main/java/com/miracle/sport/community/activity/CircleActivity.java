@@ -70,9 +70,11 @@ public class CircleActivity extends BaseActivity<ActivityCircleBinding> {
         ZClient.getService(SportService.class).getCircleList().enqueue(new ZCallback<ZResponse<List<CircleBean>>>(this) {
             @Override
             public void onSuccess(ZResponse<List<CircleBean>> data) {
-                mAdapter.update(data.getData());
-                mAdapter.setSelectPosition(mPosition);
-                circleFragment.setData(mAdapter.getItem(mPosition).getChild());
+                if (data != null && data.getData() != null && !data.getData().isEmpty()) {
+                    mAdapter.update(data.getData());
+                    mAdapter.setSelectPosition(mPosition);
+                    circleFragment.setData(mAdapter.getItem(mPosition).getChild());
+                }
             }
         });
     }

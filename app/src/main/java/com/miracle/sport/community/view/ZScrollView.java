@@ -41,8 +41,5 @@ public class ZScrollView extends MyScrollview {
                 childView.setVisibility(VISIBLE);
             }
         }
-
-        Log.e("ZZ", "childView:" + childPosition[1]);
-        Log.e("ZZ", "desView:" + desPosition[1]);
     }
 }
