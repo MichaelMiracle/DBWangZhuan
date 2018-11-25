@@ -48,7 +48,7 @@ public class ZClient {
         builder.cache(cache);
         builder.addNetworkInterceptor(new CacheInterceptor());
         // 打印参数
-        builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE));
+        builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         //适配多小米小庄多BaseUrl
         builder.addInterceptor(new ZMultiBaseUrlInterceptor());
         //添加默认参数
