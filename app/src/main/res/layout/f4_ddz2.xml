@@ -93,7 +93,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:background="#8A7BEA">
+                    android:background="#32a6E4">
 
                     <TextView
                         android:id="@+id/ibmyPost"
