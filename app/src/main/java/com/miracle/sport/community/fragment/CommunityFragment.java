@@ -2,8 +2,11 @@ package com.miracle.sport.community.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -27,6 +30,7 @@ import com.miracle.sport.SportService;
 import com.miracle.sport.community.activity.CircleActivity;
 import com.miracle.sport.community.activity.PublishPostActivity;
 import com.miracle.sport.community.bean.MyCircleBean;
+import com.miracle.sport.home.fragment.HomeFragment;
 import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 
@@ -53,6 +57,9 @@ public class CommunityFragment extends BaseFragment<FragmentCommunityBinding> {
 
     @Override
     public void initView() {
+//        mBaseBinding.titlebarFrag.showLeft(drawerLayout != null);
+//        mBaseBinding.titlebarFrag.setLeft(CommonUtils.getString(R.string.icon_side_menu), Color.WHITE, 16);
+        binding.titleBar.showLeft(drawerLayout != null);
         binding.zRadiogroupTop.combineAnother(binding.zRadiogroup);
         binding.zRadiogroup.combineAnother(binding.zRadiogroupTop);
         binding.zRadiogroup.setUp(getChildFragmentManager(), R.id.containerCommunity, hotPostFragment = new HotPostFragment(), latestPostFragment = new LatestPostFragment());
@@ -111,6 +118,13 @@ public class CommunityFragment extends BaseFragment<FragmentCommunityBinding> {
 
     @Override
     public void initListener() {
+        binding.titleBar.setLeftClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout != null)
+                    drawerLayout.openDrawer(Gravity.START);
+            }
+        });
 
         binding.titleBar.setRightClickListener(new View.OnClickListener() {
             @Override
@@ -200,5 +214,12 @@ public class CommunityFragment extends BaseFragment<FragmentCommunityBinding> {
             binding.zRadiogroup.setCheck(1);
         }
 
+    }
+
+    private DrawerLayout drawerLayout;
+
+    public CommunityFragment setDrawer(DrawerLayout drawerLayout) {
+        this.drawerLayout = drawerLayout;
+        return this;
     }
 }

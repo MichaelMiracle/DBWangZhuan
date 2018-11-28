@@ -1,7 +1,9 @@
 package com.miracle.michael.football.activity;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -23,8 +25,21 @@ import com.miracle.databinding.ActivityFootballDrawerBinding;
 import com.miracle.michael.common.bean.DrawerItemBean;
 import com.miracle.michael.football.fragment.FootballF1;
 import com.miracle.michael.football.fragment.FootballF3;
+import com.miracle.michael.football.fragment.FootballF5;
+import com.miracle.sport.SportService;
+import com.miracle.sport.community.bean.MyCircleBean;
+import com.miracle.sport.community.bean.PostBean;
+import com.miracle.sport.community.fragment.CommunityFragment;
+import com.miracle.sport.home.bean.Football;
+import com.miracle.sport.home.fragment.HomeFragment;
+import com.miracle.sport.me.activity.DDZMyCircleActivity;
+import com.miracle.sport.me.activity.DDZMyPostActivity;
+import com.miracle.sport.me.activity.MyCollectionsActivity;
+import com.miracle.sport.onetwo.frag.FragmentLotteryMain;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Michael on 2018/10/18 19:52 (星期四)
@@ -35,10 +50,10 @@ public class FootballDrawerMainActivity extends BaseActivity<ActivityFootballDra
     private FragmentManager fragmentManager;
     private Fragment fragment1, fragment2, fragment3, fragment4;
 
-    private DrawerItemBean[] drawerItems = {new DrawerItemBean(CommonUtils.getString(R.string.icon_tab_home), "快讯"),
-            new DrawerItemBean(CommonUtils.getString(R.string.icon_tab_auction), "数据排行榜"),
-            new DrawerItemBean(CommonUtils.getString(R.string.icon_chatroom), "聊天室"),
-            new DrawerItemBean(CommonUtils.getString(R.string.icon_order_manage), "赛事分析"),
+    private DrawerItemBean[] drawerItems = {new DrawerItemBean(CommonUtils.getString(R.string.icon_tab_home), "首页"),
+            new DrawerItemBean(CommonUtils.getString(R.string.icon_tab_auction), "资讯"),
+            new DrawerItemBean(CommonUtils.getString(R.string.icon_chatroom), "发现"),
+            new DrawerItemBean(CommonUtils.getString(R.string.icon_order_manage), "聊天室"),
             new DrawerItemBean(CommonUtils.getString(R.string.icon_settings), "设置")
     };
 
@@ -50,6 +65,7 @@ public class FootballDrawerMainActivity extends BaseActivity<ActivityFootballDra
     @Override
     public void initView() {
         hideTitle();
+        showContent();
         binding.drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -67,12 +83,18 @@ public class FootballDrawerMainActivity extends BaseActivity<ActivityFootballDra
 
         mAdapter.setNewData(Arrays.asList(drawerItems));
         fragmentManager = getSupportFragmentManager();
-        fragment1 = new FootballF1().setDrawer(binding.drawerLayout);
-//        fragment2 = new FootballF5().setDrawer(binding.drawerLayout);
-        fragment3 = new FootballF3().setDrawer(binding.drawerLayout);
+        fragment1 = new FragmentLotteryMain().setDrawer(binding.drawerLayout);
+        fragment2 = new HomeFragment().setDrawer(binding.drawerLayout);
+        fragment3 = new CommunityFragment().setDrawer(binding.drawerLayout);
 //        fragment4 = new FootballF4().setDrawer(binding.drawerLayout);
-        fragmentManager.beginTransaction().replace(R.id.container, fragment1).commit();
-
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.container, fragment1);
+        fragmentTransaction.add(R.id.container, fragment2);
+        fragmentTransaction.add(R.id.container, fragment3);
+        fragmentTransaction.hide(fragment2);
+        fragmentTransaction.hide(fragment3);
+        lastFragment = fragment1;
+        fragmentTransaction.commitNow();
     }
 
     @Override
@@ -91,6 +113,36 @@ public class FootballDrawerMainActivity extends BaseActivity<ActivityFootballDra
                 GlideApp.with(mContext).load(userInfo.getImg()).placeholder(R.mipmap.default_head).into(binding.ivHeadImg);
             }
         });
+
+        ZClient.getService(SportService.class).getMyPostList(1, 10).enqueue(new ZCallback<ZResponse<List<PostBean>>>() {
+            @Override
+            protected void onSuccess(ZResponse<List<PostBean>> zResponse) {
+                if (zResponse != null) {
+                    binding.ibmyPost.setText(MessageFormat.format("我的发帖{0}", zResponse.getTotal()));
+                }
+            }
+        });
+        ZClient.getService(SportService.class).getMyCircleList().enqueue(new ZCallback<ZResponse<List<MyCircleBean>>>() {
+            @Override
+            public void onSuccess(ZResponse<List<MyCircleBean>> zResponse) {
+                if (zResponse != null) {
+                    List<MyCircleBean> data = zResponse.getData();
+                    if (data != null && !data.isEmpty()) {
+                        binding.ibmyCircle.setText(MessageFormat.format("我的圈子{0}", data.size()));
+                    }
+                }
+            }
+        });
+
+        ZClient.getService(SportService.class).getMycollections(1, 10).enqueue(new ZCallback<ZResponse<List<Football>>>() {
+            @Override
+            protected void onSuccess(ZResponse<List<Football>> zResponse) {
+                if (zResponse != null && zResponse.getTotal() > 0) {
+                    binding.ibBailManage.setText(MessageFormat.format("我的收藏{0}", zResponse.getTotal()));
+                }
+            }
+        });
+
     }
 
     private final class DrawerItemAdapter extends RecyclerViewAdapter<DrawerItemBean> {
@@ -115,16 +167,16 @@ public class FootballDrawerMainActivity extends BaseActivity<ActivityFootballDra
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (position) {
                     case 0:
-                        fragmentManager.beginTransaction().replace(R.id.container, fragment1).commit();
+                        showFragment(fragment1);
                         break;
                     case 1:
-                        fragmentManager.beginTransaction().replace(R.id.container, fragment3).commit();
+                        showFragment(fragment2);
                         break;
                     case 2:
-                        GOTO.ChatActivity(mContext);
+                        showFragment(fragment3);
                         break;
                     case 3:
-                        GOTO.FootballSaiShiFenXiActivity(mContext);
+                        GOTO.ChatActivity(mContext);
                         break;
                     case 4:
                         GOTO.SettingActivity(mContext);
@@ -134,6 +186,20 @@ public class FootballDrawerMainActivity extends BaseActivity<ActivityFootballDra
                 binding.drawerLayout.closeDrawers();
             }
         });
+
+        binding.ibmyCircle.setOnClickListener(this);
+        binding.ibmyPost.setOnClickListener(this);
+        binding.ibBailManage.setOnClickListener(this);
+    }
+
+    private Fragment lastFragment;
+
+    private void showFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.show(fragment);
+        fragmentTransaction.hide(lastFragment);
+        lastFragment = fragment;
+        fragmentTransaction.commitNow();
     }
 
     @Override
@@ -148,7 +214,29 @@ public class FootballDrawerMainActivity extends BaseActivity<ActivityFootballDra
                 if (userInfo == null) {
                     GOTO.LoginActivity(mContext);
                 } else {
-                    GOTO.FootballMeActivity(mContext,userInfo);
+                    GOTO.MeInfoActivity(mContext, userInfo);
+                }
+                break;
+            case R.id.ibBailManage:
+                if (CommonUtils.getUser() == null) {
+                    GOTO.LoginActivity(mContext);
+                } else {
+//                    GOTO.LotteryMyCollectionsActivity();
+                    startActivity(new Intent(mContext, MyCollectionsActivity.class));
+                }
+                break;
+            case R.id.ibmyCircle:
+                if (CommonUtils.getUser() == null) {
+                    GOTO.LoginActivity(mContext);
+                } else {
+                    startActivity(new Intent(mContext, DDZMyCircleActivity.class));
+                }
+                break;
+            case R.id.ibmyPost:
+                if (CommonUtils.getUser() == null) {
+                    GOTO.LoginActivity(mContext);
+                } else {
+                    startActivity(new Intent(mContext, DDZMyPostActivity.class));
                 }
                 break;
         }

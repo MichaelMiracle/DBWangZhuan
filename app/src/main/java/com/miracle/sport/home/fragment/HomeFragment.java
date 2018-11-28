@@ -5,9 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -45,6 +47,7 @@ import com.miracle.sport.home.bean.ChannerlKey;
 import com.miracle.sport.home.listener.OnChannelListener;
 import com.miracle.sport.home.util.PreUtils;
 import com.miracle.sport.home.util.UIUtils;
+import com.miracle.sport.onetwo.frag.FragmentLotteryMain;
 import com.yanzhenjie.sofia.Sofia;
 import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
@@ -55,7 +58,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
-
 
 
 public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements OnChannelListener {
@@ -81,6 +83,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements O
 
     @Override
     public void initView() {
+        binding.titleBar.showLeft(drawerLayout != null);
         reqData();
         initBanner();
         List<String> textList = Arrays.asList("欢迎来到应用", "可在社区中讨论赛事相关信息", "期待您加入我们");
@@ -190,7 +193,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements O
 
         binding.ivOperation.setOnClickListener(this);
 
-        mChannelPagerAdapter = new ChannelPagerAdapter(mChannelFragments, mSelectedChannels,getChildFragmentManager());
+        mChannelPagerAdapter = new ChannelPagerAdapter(mChannelFragments, mSelectedChannels, getChildFragmentManager());
         mChannelPagerAdapter.notifyDataSetChanged();
         binding.vpContent.setAdapter(mChannelPagerAdapter);
         binding.vpContent.setOffscreenPageLimit(mSelectedChannels.size());
@@ -230,6 +233,13 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements O
 
     @Override
     public void initListener() {
+        binding.titleBar.setLeftClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout != null)
+                    drawerLayout.openDrawer(Gravity.START);
+            }
+        });
     }
 
 
@@ -280,9 +290,9 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements O
             //默认添加了全部频道
             for (int i = 0; i < mNetChannels.size(); i++) {
                 String title = mNetChannels.get(i).getName();
-                String code = mNetChannels.get(i).getId()+"";
+                String code = mNetChannels.get(i).getId() + "";
                 String pic = mNetChannels.get(i).getPic();
-                mSelectedChannels.add(new Channel(title, code,pic));
+                mSelectedChannels.add(new Channel(title, code, pic));
             }
 
             selectedChannelJson = mGson.toJson(mSelectedChannels);//将集合转换成json字符串
@@ -297,7 +307,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements O
             mSelectedChannels.clear();
             mUnSelectedChannels.clear();
             mSelectedChannels.addAll(selectedChannel);
-            if(null != unselectChannel){
+            if (null != unselectChannel) {
                 mUnSelectedChannels.addAll(unselectedChannel);
             }
         }
@@ -310,8 +320,8 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements O
 //        KLog.e("initChannelFragments");
 //        mChannelCodes = m;
 //        for (Channel channel : mSelectedChannels) {
-        for (int i=0; i<mSelectedChannels.size();i++) {
-            if(0==i){
+        for (int i = 0; i < mSelectedChannels.size(); i++) {
+            if (0 == i) {
                 ChannelHomeFristFragment newsFragment = new ChannelHomeFristFragment();
                 Bundle bundle = new Bundle();
 //            bundle.putString(Constant.CHANNEL_CODE, channel.id);
@@ -319,8 +329,8 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements O
 //            bundle.putBoolean(Constant.IS_VIDEO_LIST, channel.id.equals(mChannelCodes[1]));//是否是视频列表页面,根据判断频道号是否是视频
                 newsFragment.setArguments(bundle);
                 mChannelFragments.add(newsFragment);//添加到集合中
-            }else{
-                ChannelHomeFragment newsFragment  = new ChannelHomeFragment();
+            } else {
+                ChannelHomeFragment newsFragment = new ChannelHomeFragment();
                 Bundle bundle = new Bundle();
 //            bundle.putString(Constant.CHANNEL_CODE, channel.id);
                 bundle.putString(Constant.CHANNEL_CODE, mSelectedChannels.get(i).id);
@@ -378,4 +388,10 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> implements O
         datas.add(endPos, o);
     }
 
+    private DrawerLayout drawerLayout;
+
+    public HomeFragment setDrawer(DrawerLayout drawerLayout) {
+        this.drawerLayout = drawerLayout;
+        return this;
+    }
 }

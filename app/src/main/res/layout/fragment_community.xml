@@ -11,6 +11,7 @@
             android:id="@+id/titleBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:TitleBar_LeftText="@string/icon_side_menu"
             app:TitleBar_LeftVisibility="invisible"
             app:TitleBar_RightText="发帖子"
             app:TitleBar_Title="发现" />

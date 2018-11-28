@@ -17,6 +17,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:TitleBar_Background="@color/title_color"
+                app:TitleBar_LeftText="@string/icon_back"
                 app:TitleBar_TextColor="@color/white"
                 app:TitleBar_Title="" />
 

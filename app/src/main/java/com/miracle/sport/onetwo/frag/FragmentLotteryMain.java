@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Message;
+import android.support.v4.widget.DrawerLayout;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -33,9 +34,11 @@ import com.miracle.base.network.ZCallback;
 import com.miracle.base.network.ZClient;
 import com.miracle.base.network.ZResponse;
 import com.miracle.base.switcher.GameActivity;
+import com.miracle.base.util.CommonUtils;
 import com.miracle.base.util.ContextHolder;
 import com.miracle.base.util.DisplayUtil;
 import com.miracle.databinding.FragmentCpMainTopBinding;
+import com.miracle.michael.football.fragment.FootballF3;
 import com.miracle.sport.SportService;
 import com.miracle.sport.home.bean.ChannerlKey;
 import com.miracle.sport.onetwo.act.OneFragActivity;
@@ -50,7 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //FragmentCpMainBinding
-public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding>{
+public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding> {
     public static int WHAT_GET_MARQUEE = 1;
     private static int WHAT_FLIP_TEXT = 10;
 
@@ -69,10 +72,15 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
 
     @Override
     public void initView() {
+        showTitle();
+        mBaseBinding.titlebarFrag.showLeft(drawerLayout != null);
+        mBaseBinding.titlebarFrag.setLeft(CommonUtils.getString(R.string.icon_side_menu), Color.WHITE, 18);
+        setTitle("首页");
+//       mBaseBinding.titlebarFrag.
         Log.i("TAG", "initView: xxxxxxxxxxx 1");
-        setShowTitle(true);
-        setTitle(getString(R.string.tab_name_home));
-        getTitleBar().showLeft(false);
+//        setShowTitle(true);
+//        setTitle(getString(R.string.tab_name_home));
+//        getTitleBar().showLeft(false);
         topBinding = DataBindingUtil.inflate(LayoutInflater.from(getActivity()), R.layout.fragment_cp_main_top, null, false);
         initTopHeader();
 
@@ -102,7 +110,7 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
         uiHandler.sendEmptyMessageDelayed(WHAT_FLIP_TEXT, 2000);
     }
 
-    public void setupSubFrag(){
+    public void setupSubFrag() {
         subFrag.setFragLifeListner(new FragLifeListner() {
             @Override
             public void onViewCreated() {
@@ -136,7 +144,7 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
         topBinding.getRoot().findViewById(R.id.main_farg_tryrand).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),OneFragActivity.class);
+                Intent intent = new Intent(getActivity(), OneFragActivity.class);
                 intent.putExtra(OneFragActivity.EXTRA_KEY_FRAG_CLASS, RandomNumFragment.class);
                 startActivity(intent);
             }
@@ -179,7 +187,8 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
             }
         });
     }
-    private void LoadDataHSuserBarType(){
+
+    private void LoadDataHSuserBarType() {
 //        RequestUtil.cachePrior(ZClient.getService(SportService.class).getSearchKeys(), new ZCallback<ZResponse<List<ChannerlKey>>>("CHANNER1key") {
 //            @Override
 //            protected void onSuccess(ZResponse<List<ChannerlKey>> zResponse) {
@@ -190,15 +199,15 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
 //            }
 //        });
 
-        ZCallback zCallback = new ZCallback<ZResponse<List<ChannerlKey>>>(subFrag.binding.swipeRefreshLayout){
+        ZCallback zCallback = new ZCallback<ZResponse<List<ChannerlKey>>>(subFrag.binding.swipeRefreshLayout) {
             @Override
             protected void onSuccess(ZResponse<List<ChannerlKey>> zResponse) {
                 LinearLayout main_frag_hs_ll = topBinding.getRoot().findViewById(R.id.main_frag_hs_ll);
                 main_frag_hs_ll.removeAllViews();
-                for(ChannerlKey item : zResponse.getData()){
+                for (ChannerlKey item : zResponse.getData()) {
                     //排除 ‘推荐’
-                    if(1 != Integer.parseInt(item.getId()))
-                        addToHS(item.getName(),Integer.parseInt(item.getId()),item.getPic());
+                    if (1 != Integer.parseInt(item.getId()))
+                        addToHS(item.getName(), Integer.parseInt(item.getId()), item.getPic());
                 }
             }
         };
@@ -207,10 +216,10 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
         RequestUtil.cacheUpdate(ZClient.getService(SportService.class).getSearchKeys(), zCallback);
     }
 
-    private void addToHS(final String str, final int key, String picUrl){
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.main_frag_hs1_item,null);
+    private void addToHS(final String str, final int key, String picUrl) {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.main_frag_hs1_item, null);
         ImageView iv = view.findViewById(R.id.main_farg_hs1_iv);
-        ((TextView)view.findViewById(R.id.main_farg_hs1_tv1)).setText(str);
+        ((TextView) view.findViewById(R.id.main_farg_hs1_tv1)).setText(str);
         GlideApp.with(mContext).load(picUrl).into(iv);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,7 +231,7 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
                 msg.what = FragCpItemList.MSG_WHAT_KEY_REQKEY;
                 msg.arg1 = key;
                 i.putExtra(OneFragActivity.EXTRA_KEY_MSG, msg);
-                i.putExtra(OneFragActivity.EXTRA_KEY_ACT_TITLE, ""+str);
+                i.putExtra(OneFragActivity.EXTRA_KEY_ACT_TITLE, "" + str);
                 startActivity(i);
             }
         });
@@ -250,8 +259,8 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
                 return t;
             }
         });
-        textSwitcher.setInAnimation(getContext(),android.R.anim.slide_in_left);
-        textSwitcher.setOutAnimation(getContext(),android.R.anim.slide_out_right);
+        textSwitcher.setInAnimation(getContext(), android.R.anim.slide_in_left);
+        textSwitcher.setOutAnimation(getContext(), android.R.anim.slide_out_right);
         uiHandler.sendEmptyMessage(WHAT_FLIP_TEXT);
     }
 
@@ -284,7 +293,13 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
 
     @Override
     public void initListener() {
-
+        mBaseBinding.titlebarFrag.setLeftClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout != null)
+                    drawerLayout.openDrawer(Gravity.START);
+            }
+        });
     }
 
     @Override
@@ -299,21 +314,19 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
 
     @Override
     public void onHandleMessage(Message msg) {
-        if(msg.what == WHAT_GET_MARQUEE){
-            if(msg.obj != null && msg.obj instanceof List)
-            {
+        if (msg.what == WHAT_GET_MARQUEE) {
+            if (msg.obj != null && msg.obj instanceof List) {
                 List<LotteryCatListItem> list = (List<LotteryCatListItem>) msg.obj;
                 List<Spanned> data = new ArrayList<>();
-                for(LotteryCatListItem item : list){
-                    String str = item.getName() + ": <font color=\"#ff0000\">" + item.getHost_num() + "</font> <font color=\"#0000ff\">" + item.getFirst_num()+"</font>";
+                for (LotteryCatListItem item : list) {
+                    String str = item.getName() + ": <font color=\"#ff0000\">" + item.getHost_num() + "</font> <font color=\"#0000ff\">" + item.getFirst_num() + "</font>";
                     data.add(Html.fromHtml(str));
                 }
                 mardatas.clear();
                 initMard(data);
             }
-        }else if(msg.what == WHAT_FLIP_TEXT){
-            if(getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED))
-            {
+        } else if (msg.what == WHAT_FLIP_TEXT) {
+            if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
                 Spanned text = mardatas.get(mardIndex);
                 textSwitcher.setText(text);
 
@@ -323,5 +336,12 @@ public class FragmentLotteryMain extends HandleFragment<FragmentCpMainTopBinding
                 uiHandler.sendEmptyMessageDelayed(WHAT_FLIP_TEXT, 2000);
             }
         }
+    }
+
+    private DrawerLayout drawerLayout;
+
+    public FragmentLotteryMain setDrawer(DrawerLayout drawerLayout) {
+        this.drawerLayout = drawerLayout;
+        return this;
     }
 }

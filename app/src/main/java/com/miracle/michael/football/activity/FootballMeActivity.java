@@ -30,6 +30,7 @@ public class FootballMeActivity extends BaseActivity<ActivityFootballMeBinding> 
     @Override
     public void initView() {
         setTitle("我");
+        showContent();
     }
 
     private void reqData() {
