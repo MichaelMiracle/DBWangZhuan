@@ -196,8 +196,8 @@ public class FootballDrawerMainActivity extends BaseActivity<ActivityFootballDra
 
     private void showFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.show(fragment);
         fragmentTransaction.hide(lastFragment);
+        fragmentTransaction.show(fragment);
         lastFragment = fragment;
         fragmentTransaction.commitNow();
     }
